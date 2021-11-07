@@ -19,6 +19,7 @@ raw_backgrounds_path = os.path.join(source_path, 'raw_backgrounds')
 labels = data_generation_config._labels_
 split_ratio = data_generation_config._split_ratio_
 images_path = 'Tensorflow/workspace/images'
+tfrecord_generator_script = 'tfrecord_generator.py'
 
 
 # make directory for generated images
@@ -81,3 +82,10 @@ for file_name in train_files: # copying traing images and annotations
 for file_name in test_files: # copying test images and annotations
   shutil.copy(f'{images_path}/generated_data/{file_name}.jpg', f'{images_path}/test/{file_name}.jpg')
   shutil.copy(f'{images_path}/generated_data/{file_name}.xml', f'{images_path}/test/{file_name}.xml')
+
+
+# creating tfrecords from images and labels
+cmd = f"python {tfrecord_generator_script} -x {os.path.join(image_path, 'train')} -l {annotation_file} -o {os.path.join(annotation_path, 'train.record')}"
+os.system(cmd)
+cmd = f"python {tfrecord_generator_script} -x {os.path.join(image_path, 'test')} -l {annotation_file} -o {os.path.join(annotation_path, 'test.record')}"
+os.system(cmd)

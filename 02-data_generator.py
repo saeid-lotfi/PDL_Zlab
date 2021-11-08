@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 from pascal_voc_writer import Writer
 import configs
-from configs import paths, files
+from configs import paths
 
 
 # getting parameters
@@ -73,7 +73,7 @@ data_generate(n_samples= configs._number_of_test_samples_,
 
 
 # make label map
-with open(files['LABELMAP'], 'w') as f:
+with open(paths['LABELMAP'], 'w') as f:
     for label in configs._labels_:
         f.write('item { \n')
         f.write('\tname:\'{}\'\n'.format(label['name']))
@@ -81,7 +81,7 @@ with open(files['LABELMAP'], 'w') as f:
         f.write('}\n')
 
 # creating tfrecords from images and labels
-cmd = f"python {tfrecord_generator_script} -x {paths['TRAIN_GENERATION_PATH']} -l {files['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'train.record')}"
+cmd = f"python {tfrecord_generator_script} -x {paths['TRAIN_GENERATION_PATH']} -l {paths['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'train.record')}"
 os.system(cmd)
-cmd = f"python {tfrecord_generator_script} -x {paths['TEST_GENERATION_PATH']} -l {files['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'test.record')}"
+cmd = f"python {tfrecord_generator_script} -x {paths['TEST_GENERATION_PATH']} -l {paths['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'test.record')}"
 os.system(cmd)

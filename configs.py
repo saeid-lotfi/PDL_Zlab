@@ -5,26 +5,15 @@ _number_of_test_samples_ = 3
 _image_size_ = (640, 480)
 _labels_ = [{'name':'digit', 'id':1}]
 
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet' 
-PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8'
-PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz'
-LABEL_MAP_NAME = 'label_map.pbtxt'
-
 paths = {
-    'RAW_DIGITS': os.path.join('data','raw_digits'),
-    'RAW_BACKGROUNDS': os.path.join('data','raw_backgrounds'),
-    'WORKSPACE_PATH': os.path.join('Tensorflow','workspace'),
-    'APIMODEL_PATH': os.path.join('Tensorflow','models'),
-    'ANNOTATION_PATH': os.path.join('Tensorflow','workspace','annotations'),
-    'IMAGE_PATH': os.path.join('Tensorflow','workspace','images'),
-    'MODEL_PATH': os.path.join('Tensorflow','workspace','models'),
-    'PRETRAINED_MODEL_PATH': os.path.join('Tensorflow','workspace','pre-trained-models'),
-    'PROTOC_PATH': os.path.join('Tensorflow','protoc'),
-    'TRAIN_GENERATION_PATH': os.path.join('Tensorflow','workspace','images','generated','train'),
-    'TEST_GENERATION_PATH': os.path.join('Tensorflow','workspace','images','generated','test')
+    'RAW_DIGITS': os.path.join('data', 'raw_digits'), # path to raw digits directory
+    'RAW_BACKGROUNDS': os.path.join('data', 'raw_backgrounds'), # path to raw backgrounds directory
+    'TRAIN_GENERATION_PATH': os.path.join('Tensorflow', 'workspace', 'images', 'generated', 'train'), # path for generated train images and .xml files
+    'TEST_GENERATION_PATH': os.path.join('Tensorflow', 'workspace', 'images', 'generated', 'test'), # path for generated test images and .xml files
+    'LABELMAP': os.path.join('Tensorflow', 'workspace', 'annotations', 'label_map.pbtxt'), # label map file name and path
+    'WORKSPACE_PATH': os.path.join('Tensorflow', 'workspace'), # path to our workflow directory
+    'APIMODEL_PATH': os.path.join('Tensorflow', 'models'), # path for Tensorflow Model Garden repo
+    'ANNOTATION_PATH': os.path.join('Tensorflow', 'workspace', 'annotations'), # path to tfrecord files and label maps
+    'MODEL_PATH': os.path.join('Tensorflow', 'workspace', 'models'), # path for our trained models
+    'PRETRAINED_MODEL_PATH': os.path.join('Tensorflow', 'workspace', 'pre-trained-models'), # path for pretrained models
  }
-
-files = {
-    'PIPELINE_CONFIG':os.path.join('Tensorflow', 'workspace','models', CUSTOM_MODEL_NAME, 'pipeline.config'),
-    'LABELMAP': os.path.join(paths['ANNOTATION_PATH'], 'label_map.pbtxt')
-}

@@ -5,7 +5,10 @@ _number_of_test_samples_ = 3
 _image_size_ = (640, 480)
 _labels_ = [{'name':'digit', 'id':1}]
 
-
+CUSTOM_MODEL_NAME = 'my_ssd_mobnet' 
+PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8'
+PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz'
+LABEL_MAP_NAME = 'label_map.pbtxt'
 
 paths = {
     'RAW_DIGITS': os.path.join('data','raw_digits'),
@@ -22,17 +25,6 @@ paths = {
  }
 
 files = {
-    # 'PIPELINE_CONFIG':os.path.join('Tensorflow', 'workspace','models', CUSTOM_MODEL_NAME, 'pipeline.config'),
-    # 'TF_RECORD_SCRIPT': os.path.join(paths['SCRIPTS_PATH'], TF_RECORD_SCRIPT_NAME), 
+    'PIPELINE_CONFIG':os.path.join('Tensorflow', 'workspace','models', CUSTOM_MODEL_NAME, 'pipeline.config'),
     'LABELMAP': os.path.join(paths['ANNOTATION_PATH'], 'label_map.pbtxt')
 }
-
-'''
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet' 
-PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8'
-PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz'
-TF_RECORD_SCRIPT_NAME = 'generate_tfrecord.py'
-LABEL_MAP_NAME = 'label_map.pbtxt'
-
-
-'''

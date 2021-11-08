@@ -1,2 +1,3 @@
+wget
 pascal-voc-writer
 pyparsing==2.4.7

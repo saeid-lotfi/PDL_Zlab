@@ -79,10 +79,9 @@ with open(files['LABELMAP'], 'w') as f:
         f.write('\tname:\'{}\'\n'.format(label['name']))
         f.write('\tid:{}\n'.format(label['id']))
         f.write('}\n')
-'''
+
 # creating tfrecords from images and labels
 cmd = f"python {tfrecord_generator_script} -x {paths['TRAIN_GENERATION_PATH']} -l {files['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'train.record')}"
 os.system(cmd)
 cmd = f"python {tfrecord_generator_script} -x {paths['TEST_GENERATION_PATH']} -l {files['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'test.record')}"
 os.system(cmd)
-'''

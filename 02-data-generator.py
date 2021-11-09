@@ -9,8 +9,6 @@ import configs
 from configs import paths
 
 
-# getting parameters
-tfrecord_generator_script = 'tfrecord_generator.py'
 
 def generate_example(digit_path, bg_path, output_path):
   '''
@@ -73,7 +71,8 @@ data_generate(n_samples= configs._number_of_test_samples_,
 
 
 # make label map
-with open(paths['LABELMAP'], 'w') as f:
+LABEL_FILE = os.path.join(paths['ANNOTATION_PATH'], 'label_map.pbtxt')
+with open(LABEL_FILE, 'w') as f:
     for label in configs._labels_:
         f.write('item { \n')
         f.write('\tname:\'{}\'\n'.format(label['name']))
@@ -81,7 +80,11 @@ with open(paths['LABELMAP'], 'w') as f:
         f.write('}\n')
 
 # creating tfrecords from images and labels
-cmd = f"python {tfrecord_generator_script} -x {paths['TRAIN_GENERATION_PATH']} -l {paths['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'train.record')}"
-os.system(cmd)
-cmd = f"python {tfrecord_generator_script} -x {paths['TEST_GENERATION_PATH']} -l {paths['LABELMAP']} -o {os.path.join(paths['ANNOTATION_PATH'], 'test.record')}"
-os.system(cmd)
+TFRECORD_GEN_SCR = 'tfrecord_generator.py'
+TRAIN_OUTPUT = os.path.join(paths['ANNOTATION_PATH'], 'train.record')
+TEST_OUTPUT = os.path.join(paths['ANNOTATION_PATH'], 'test.record')
+
+cmd = f"python {TFRECORD_GEN_SCR} -x {paths['TRAIN_GENERATION_PATH']} -l {LABEL_FILE} -o {TRAIN_OUTPUT}"
+os.system(cmd) # running tfrecord script
+cmd = f"python {TFRECORD_GEN_SCR} -x {paths['TEST_GENERATION_PATH']} -l {LABEL_FILE} -o {TEST_OUTPUT}"
+os.system(cmd) # running tfrecord script

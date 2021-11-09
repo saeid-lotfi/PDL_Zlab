@@ -24,7 +24,7 @@ def generate_example(digit_path, bg_path, output_path):
   mask = Image.new(mode= 'L', size= configs._image_size_, color= 'white') # blank white image
   mask = np.array(mask) # changing to numpy
   # locating digits in mask
-  n_digits = np.random.randint(1,6) # select number of digits in a single image
+  n_digits = np.random.randint(6) # select number of digits in a single image
   raw_digits = os.listdir(digit_path) # list of available digits
   raw_backgrounds = os.listdir(bg_path) # list of available backgrounds
   if n_digits >= 1:

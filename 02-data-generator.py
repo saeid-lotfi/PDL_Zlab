@@ -22,23 +22,26 @@ def generate_example(digit_path, bg_path, output_path):
   mask = Image.new(mode= 'L', size= configs._image_size_, color= 'white') # blank white image
   mask = np.array(mask) # changing to numpy
   # locating digits in mask
-  n_digits = np.random.randint(6) # select number of digits in a single image
+  n_digits = np.random.randint(4) # select number of digits in a single image
   raw_digits = os.listdir(digit_path) # list of available digits
   raw_backgrounds = os.listdir(bg_path) # list of available backgrounds
   if n_digits >= 1:
     for i in range(n_digits):
+      
       # select random digit from raw digits
-      random_digit = random.choice(raw_digits)
-      digit_wh = np.random.randint(30, 120)
-      # locate bounding box
-      x_min = np.random.randint(int(configs._image_size_[0] * 0.05), int(configs._image_size_[0] * 0.7))
-      y_min = np.random.randint(int(configs._image_size_[1] * 0.05), int(configs._image_size_[1] * 0.7))
-      x_max = x_min + digit_wh
-      y_max = y_min + digit_wh
-      # open selected digit
+      random_digit = random.choice(raw_digits) # random digit image
       selected_digit = Image.open(f'{digit_path}/{random_digit}').convert('L') # converting to monocolor
-      selected_digit = selected_digit.resize((digit_wh, digit_wh)) # resizing
-      selected_digit = selected_digit.rotate(np.random.randint(-20, 20), fillcolor= 'white') # small transformation
+      digit_width, digit_height = (selected_digit.size[0], selected_digit.size[1]) # getting size
+      random_scale = np.random.uniform(0.5, 2) # random choice for scaling
+      digit_width = int(digit_width * random_scale)
+      digit_height = int(digit_width * random_scale)
+      selected_digit = selected_digit.resize((digit_width, digit_height)) # resizing
+      selected_digit = selected_digit.rotate(np.random.randint(-10, 10), fillcolor= 'white') # small transformation
+      # locate bounding box
+      x_min = np.random.randint(int(configs._image_size_[0] * 0.05), int(configs._image_size_[0] * 0.6))
+      y_min = np.random.randint(int(configs._image_size_[1] * 0.05), int(configs._image_size_[1] * 0.6))
+      x_max = x_min + digit_width
+      y_max = y_min + digit_height
       # editing mask
       mask[y_min:y_max, x_min:x_max] = np.array(selected_digit) # replacing mask with digit
       # adding annotation

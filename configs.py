@@ -1,10 +1,10 @@
 import os
 
-_number_of_train_samples_ = 500
-_number_of_test_samples_ = 100
-_image_size_ = (640, 480)
+_number_of_train_samples_ = 100
+_number_of_test_samples_ = 20
+_image_size_ = (640, 640)
 _labels_ = [{'name':'digit', 'id':1}]
-_train_number_step_ = 5000
+_train_number_step_ = 2000
 
 paths = {
     'RAW_DIGITS': os.path.join('data', 'raw_digits'), # path to raw digits directory

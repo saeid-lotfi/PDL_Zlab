@@ -2,7 +2,7 @@ import os
 import configs
 from configs import paths
 
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet'
+CUSTOM_MODEL_NAME = 'my_det'
 CHECKPOINT_PATH = os.path.join('Tensorflow', 'workspace', 'models', CUSTOM_MODEL_NAME) # path for our specific model
 PIPELINE_FILE = os.path.join(CHECKPOINT_PATH, 'pipeline.config')
 LABEL_FILE = os.path.join(paths['ANNOTATION_PATH'], 'label_map.pbtxt')

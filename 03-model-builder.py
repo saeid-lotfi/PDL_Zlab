@@ -10,9 +10,9 @@ from google.protobuf import text_format
 import configs
 from configs import paths
 
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet' 
-PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8'
-PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz'
+CUSTOM_MODEL_NAME = 'my_det' 
+PRETRAINED_MODEL_NAME = 'efficientdet_d0_coco17_tpu-32.tar.gz'
+PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/efficientdet_d0_coco17_tpu-32.tar.gz'
 CHECKPOINT_PATH = os.path.join('Tensorflow', 'workspace', 'models', CUSTOM_MODEL_NAME) # path for our specific model
 PIPELINE_FILE = os.path.join(CHECKPOINT_PATH, 'pipeline.config')
 LABEL_FILE = os.path.join(paths['ANNOTATION_PATH'], 'label_map.pbtxt')
@@ -39,8 +39,8 @@ with tf.io.gfile.GFile(PIPELINE_FILE, "r") as f:
     text_format.Merge(proto_str, pipeline_config)
 
 # change pipeline config to our desired setting
-pipeline_config.model.ssd.num_classes = len(configs._labels_)
-pipeline_config.train_config.batch_size = 2
+# pipeline_config.model.ssd.num_classes = len(configs._labels_)
+pipeline_config.train_config.batch_size = 1
 pipeline_config.train_config.fine_tune_checkpoint = os.path.join(paths['PRETRAINED_MODEL_PATH'], PRETRAINED_MODEL_NAME, 'checkpoint', 'ckpt-0')
 pipeline_config.train_config.fine_tune_checkpoint_type = "detection"
 pipeline_config.train_input_reader.label_map_path= LABEL_FILE

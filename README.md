@@ -25,10 +25,6 @@ python 01-data-generation.py
 For changing train config we should edit yolov3.configs code in our way of interest.
 
 ## Train
-mnist folder contains mnist images, create training data:
-```
-python mnist/make_data.py
-```
 `./yolov3/configs.py` file is already configured for digit localization.
 
 Now, you can train it and then evaluate your model

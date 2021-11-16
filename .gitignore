@@ -9,3 +9,6 @@ data/yolo_format
 log
 
 model_data
+
+mAP
+

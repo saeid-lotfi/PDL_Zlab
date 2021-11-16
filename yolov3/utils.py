@@ -80,28 +80,22 @@ def Load_Yolo_model():
         try: tf.config.experimental.set_memory_growth(gpus[0], True)
         except RuntimeError: pass
         
-    if YOLO_FRAMEWORK == "tf": # TensorFlow detection
-        if YOLO_TYPE == "yolov4":
-            Darknet_weights = YOLO_V4_TINY_WEIGHTS if TRAIN_YOLO_TINY else YOLO_V4_WEIGHTS
-        if YOLO_TYPE == "yolov3":
-            Darknet_weights = YOLO_V3_TINY_WEIGHTS if TRAIN_YOLO_TINY else YOLO_V3_WEIGHTS
-            
-        if YOLO_CUSTOM_WEIGHTS == False:
-            print("Loading Darknet_weights from:", Darknet_weights)
-            yolo = Create_Yolo(input_size=YOLO_INPUT_SIZE, CLASSES=YOLO_COCO_CLASSES)
-            load_yolo_weights(yolo, Darknet_weights) # use Darknet weights
-        else:
-            checkpoint = f"./checkpoints/{TRAIN_MODEL_NAME}"
-            if TRAIN_YOLO_TINY:
-                checkpoint += "_Tiny"
-            print("Loading custom weights from:", checkpoint)
-            yolo = Create_Yolo(input_size=YOLO_INPUT_SIZE, CLASSES=TRAIN_CLASSES)
-            yolo.load_weights(checkpoint)  # use custom weights
+    if YOLO_TYPE == "yolov4":
+        Darknet_weights = YOLO_V4_TINY_WEIGHTS if TRAIN_YOLO_TINY else YOLO_V4_WEIGHTS
+    if YOLO_TYPE == "yolov3":
+        Darknet_weights = YOLO_V3_TINY_WEIGHTS if TRAIN_YOLO_TINY else YOLO_V3_WEIGHTS
         
-    elif YOLO_FRAMEWORK == "trt": # TensorRT detection
-        saved_model_loaded = tf.saved_model.load(YOLO_CUSTOM_WEIGHTS, tags=[tag_constants.SERVING])
-        signature_keys = list(saved_model_loaded.signatures.keys())
-        yolo = saved_model_loaded.signatures['serving_default']
+    if YOLO_CUSTOM_WEIGHTS == False:
+        print("Loading Darknet_weights from:", Darknet_weights)
+        yolo = Create_Yolo(input_size=YOLO_INPUT_SIZE, CLASSES=YOLO_COCO_CLASSES)
+        load_yolo_weights(yolo, Darknet_weights) # use Darknet weights
+    else:
+        checkpoint = f"./checkpoints/{TRAIN_MODEL_NAME}"
+        if TRAIN_YOLO_TINY:
+            checkpoint += "_Tiny"
+        print("Loading custom weights from:", checkpoint)
+        yolo = Create_Yolo(input_size=YOLO_INPUT_SIZE, CLASSES=TRAIN_CLASSES)
+        yolo.load_weights(checkpoint)  # use custom weights
 
     return yolo
 

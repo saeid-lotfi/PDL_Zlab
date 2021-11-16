@@ -1,4 +1,9 @@
 __pycache__
 
-Tensorflow/
-pdl_env/
+checkpoints
+
+data/generated
+
+data/yolo_format
+
+log

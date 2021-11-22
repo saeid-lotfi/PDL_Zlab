@@ -1,14 +1,18 @@
-__pycache__
+# models
+*.h5 
+*.weights
+*.tar
+*.tfrecord
+/checkpoints/
+/serving/
+/logs/
+# data
+/output.jpg
+/data/voc2012_raw/
+/data/digit_data/Annotations
+/data/digit_data/ImageSets
+/data/digit_data/JPEGImages
 
-checkpoints
 
-data/generated
 
-data/yolo_format
-
-log
-
-model_data
-
-mAP
-
+__pycache__/

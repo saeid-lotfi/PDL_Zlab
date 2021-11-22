@@ -3,41 +3,63 @@
 Persian Digit Localizer implemented by Tensorflow and YOLOv3 model
 
 ## Installation
-First, clone or download this GitHub repository.
-Install requirements and download pretrained weights:
-```
-pip install -r ./requirements.txt
+First, clone or download this GitHub repository and install requirements:
 
+```bash
+pip install -r ./requirements.txt
+```
+
+## Download and convert pre-trained Darknet weights
+
+```bash
 # yolov3
-wget -P model_data https://pjreddie.com/media/files/yolov3.weights
+wget https://pjreddie.com/media/files/yolov3.weights -O data/yolov3.weights
+
+python convert.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf
 
 # yolov3-tiny
-wget -P model_data https://pjreddie.com/media/files/yolov3-tiny.weights
+wget https://pjreddie.com/media/files/yolov3-tiny.weights -O data/yolov3-tiny.weights
+
+python convert.py --weights ./data/yolov3-tiny.weights --output ./checkpoints/yolov3-tiny.tf --tiny
 ```
 
 ## Data Generation
-Start with generating data from raw digits and raw backgrounds to produce capcha like images with known bounding boxes and annotations. This module first generate examples in a voc-pascal format and then make its yolo format:
-```
-python 01-data-generation.py
+Start with generating data from raw digits and raw backgrounds to produce capcha like images with known bounding boxes and annotations. This module generate examples in voc-structured repository.
+
+```bash
+python tools/digit_data_generator.py \
+--n_train 500 \
+--n_val 100 \
+--n_digit_in_image 5
 ```
 
-## Setting Config
-For changing train config we should edit yolov3.configs code in our way of interest.
+## Convert to TFRecord
+We need to convert raw images and .xml annotations to serialized tfrecord format:
 
-## Train
-`./yolov3/configs.py` file is already configured for digit localization.
+```bash
+python tools/digit_data_tfrecord.py
+```
 
-Now, you can train it and then evaluate your model
-```
-python 02-train.py
-tensorboard --logdir=log
-```
-Track training progress in Tensorboard and go to http://localhost:6006/:
-<p align="center">
-    <img width="100%" src="IMAGES/tensorboard.png" style="max-width:100%;"></a>
-</p>
+## Training
+Start training with 'train.py' module:
 
-Test detection with `03-single-detect.py` script:
+``` bash
+python train.py \
+--batch_size 4 \
+--dataset ./data/digits_train.tfrecord \
+--val_dataset ./data/digits_val.tfrecord \
+--epochs 50 --mode fit \
+--transfer darknet
 ```
-python 03-single-detect.py
+
+## Detection
+Run detection with 'detect.py' module:
+
+```bash
+# custom trained yolov3
+python detect.py \
+--classes ./data/digit.names \
+--num_classes 1 \
+--weights ./checkpoints/yolov3_train_10.tf \
+--image ./data/meme.jpg
 ```

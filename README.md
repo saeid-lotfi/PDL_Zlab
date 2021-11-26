@@ -1,6 +1,7 @@
 # PDL_Zlab
 
 Persian Digit Localizer implemented by Tensorflow and YOLOv3 model
+*this repo is based on zzh8829/yolov3-tf2 https://github.com/zzh8829/yolov3-tf2.git
 
 ## Installation
 First, clone or download this GitHub repository and install requirements:

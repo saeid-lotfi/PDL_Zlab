@@ -12,7 +12,7 @@ flags.DEFINE_string('data_dir', './data/digit_data/',
                     'path to raw digit data')
 flags.DEFINE_enum('split', 'train', [
                   'train', 'val'], 'specify train or val spit')
-flags.DEFINE_string('output_file', './data/digits_train.tfrecord', 'outpot dataset')
+flags.DEFINE_string('output_file', './data/digits_train.tfrecord', 'output dataset')
 flags.DEFINE_string('classes', './data/digit.names', 'classes file')
 
 

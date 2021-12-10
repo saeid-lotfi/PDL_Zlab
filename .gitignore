@@ -6,6 +6,8 @@
 /checkpoints/
 /serving/
 /logs/
+/evaluation/
+/results/
 # data
 /output.jpg
 /data/voc2012_raw/

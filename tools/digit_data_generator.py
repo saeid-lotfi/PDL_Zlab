@@ -12,7 +12,7 @@ from tqdm import tqdm
 flags.DEFINE_string('data_dir', './data/digit_data',
                     'path to raw digit data')
 flags.DEFINE_string('classes', './data/digit.names', 'classes file')
-flags.DEFINE_integer('n_train', 500, 'number of training samples')
+flags.DEFINE_integer('n_train', 1000, 'number of training samples')
 flags.DEFINE_integer('n_val', 100, 'number of validation samples')
 flags.DEFINE_integer('image_width', 640, 'image width')
 flags.DEFINE_integer('image_height', 480, 'image height')
@@ -24,6 +24,7 @@ def generate_image(digit_path, bg_path):
   generate one example from given raw digits and back grounds
   generated a new image and its annotation
   """
+  class_names = [c.strip() for c in open(FLAGS.classes).readlines()]
   # annotation template
   example_name = str(uuid.uuid4()) # unique name for generated example
   writer = Writer(f"{FLAGS.data_dir}/JPEGImages/{example_name}.jpg", FLAGS.image_width, FLAGS.image_height)
@@ -39,6 +40,7 @@ def generate_image(digit_path, bg_path):
       
       # select random digit from raw digits
       random_digit = random.choice(raw_digits) # random digit image
+      label = class_names[int(random_digit[0])]
       selected_digit = Image.open(f'{digit_path}/{random_digit}').convert('L') # converting to monocolor
       digit_width, digit_height = (selected_digit.size[0], selected_digit.size[1]) # getting size
       random_scale = np.random.uniform(0.5, 1.5) # random choice for scaling
@@ -54,7 +56,7 @@ def generate_image(digit_path, bg_path):
       # editing mask
       mask[y_min:y_max, x_min:x_max] = np.minimum(np.array(selected_digit), mask[y_min:y_max, x_min:x_max]) # replacing mask with digit
       # adding annotation
-      writer.addObject('digit', x_min, y_min, x_max, y_max)
+      writer.addObject(label, x_min, y_min, x_max, y_max)
   # save .xml annotation file
   writer.save(f"{FLAGS.data_dir}/Annotations/{example_name}.xml")
   # compose image

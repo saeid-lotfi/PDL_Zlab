@@ -16,12 +16,12 @@ pip install -r ./requirements.txt
 # yolov3
 wget https://pjreddie.com/media/files/yolov3.weights -O data/yolov3.weights
 
-python convert.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf
+python tools/convert_darknet.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf
 
 # yolov3-tiny
 wget https://pjreddie.com/media/files/yolov3-tiny.weights -O data/yolov3-tiny.weights
 
-python convert.py --weights ./data/yolov3-tiny.weights --output ./checkpoints/yolov3-tiny.tf --tiny
+python tools/convert_darknet.py --weights ./data/yolov3-tiny.weights --output ./checkpoints/yolov3-tiny.tf --tiny
 ```
 
 ## Data Generation

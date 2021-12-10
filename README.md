@@ -45,22 +45,35 @@ python tools/digit_data_tfrecord.py
 Start training with 'train.py' module:
 
 ``` bash
+# training custom yolov3
 python train.py \
---batch_size 4 \
+--classes ./data/digit.names \
 --dataset ./data/digits_train.tfrecord \
 --val_dataset ./data/digits_val.tfrecord \
---epochs 50 --mode fit \
---transfer darknet
+--epochs 50 \
+--mode fit \
+--transfer darknet \
+--num_classes 10 \
+--weights_num_classes 80 \
+--batch_size 4 \
 ```
 
 ## Detection
-Run detection with 'detect.py' module:
+Run detection with 'detection.py' module:
 
 ```bash
 # custom trained yolov3
-python detect.py \
+python detection.py \
 --classes ./data/digit.names \
---num_classes 1 \
---weights ./checkpoints/yolov3_train_10.tf \
---image ./data/meme.jpg
+--num_classes 10 \
+--weights ./checkpoints/yolov3_train_10.tf
+```
+
+## Evaluation
+Run evaluation with 'evaluatior.py' module:
+
+```bash
+# pascal voc metrics
+python evaluator.py \
+-imgsize 640,480
 ```

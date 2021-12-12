@@ -28,17 +28,46 @@ python tools/convert_darknet.py --weights ./data/yolov3-tiny.weights --output ./
 Start with generating data from raw digits and raw backgrounds to produce capcha like images with known bounding boxes and annotations. This module generate examples in voc-structured repository.
 
 ```bash
+# train
 python tools/digit_data_generator.py \
---n_train 500 \
---n_val 100 \
---n_digit_in_image 5
+--digit_dir ./data/digit_data/raw_digits/train \
+--bg_dir ./data/digit_data/raw_image/Dark_soft \
+--fg_dir ./data/digit_data/raw_image/Lark_soft \
+--dataset_split train \
+--n_samples 500 \
+python tools/digit_data_generator.py \
+--digit_dir ./data/digit_data/raw_digits/train \
+--bg_dir ./data/digit_data/raw_image/Lark_soft \
+--fg_dir ./data/digit_data/raw_image/Dark_soft \
+--dataset_split train \
+--n_samples 500 \
+# val
+python tools/digit_data_generator.py \
+--digit_dir ./data/digit_data/raw_digits/val \
+--bg_dir ./data/digit_data/raw_image/Dark_soft \
+--fg_dir ./data/digit_data/raw_image/Lark_soft \
+--dataset_split val \
+--n_samples 100 \
+python tools/digit_data_generator.py \
+--digit_dir ./data/digit_data/raw_digits/val \
+--bg_dir ./data/digit_data/raw_image/Lark_soft \
+--fg_dir ./data/digit_data/raw_image/Dark_soft \
+--dataset_split val \
+--n_samples 100 \
 ```
 
 ## Convert to TFRecord
 We need to convert raw images and .xml annotations to serialized tfrecord format:
 
 ```bash
-python tools/digit_data_tfrecord.py
+# train
+python tools/digit_data_tfrecord.py \
+--output_file ./data/digits_train.tfrecord \
+--split train
+# val
+python tools/digit_data_tfrecord.py \
+--output_file ./data/digits_val.tfrecord \
+--split val
 ```
 
 ## Training

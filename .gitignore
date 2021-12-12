@@ -10,7 +10,6 @@
 /results/
 # data
 /output.jpg
-/data/voc2012_raw/
 /data/digit_data/Annotations
 /data/digit_data/ImageSets
 /data/digit_data/JPEGImages

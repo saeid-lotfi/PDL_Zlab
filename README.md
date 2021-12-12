@@ -1,7 +1,11 @@
 # PDL_Zlab
 
 Persian Digit Localizer implemented by Tensorflow and YOLOv3 model
-*this repo is based on zzh8829/yolov3-tf2 https://github.com/zzh8829/yolov3-tf2.git
+*this repo is based on:
+
+
+zzh8829/yolov3-tf2 https://github.com/zzh8829/yolov3-tf2.git
+rafaelpadilla/Object-Detection-Metrics https://github.com/rafaelpadilla/Object-Detection-Metrics
 
 ## Installation
 First, clone or download this GitHub repository and install requirements:
@@ -32,28 +36,28 @@ Start with generating data from raw digits and raw backgrounds to produce capcha
 python tools/digit_data_generator.py \
 --digit_dir ./data/digit_data/raw_digits/train \
 --bg_dir ./data/digit_data/raw_image/Dark_soft \
---fg_dir ./data/digit_data/raw_image/Lark_soft \
+--fg_dir ./data/digit_data/raw_image/Light_soft \
 --dataset_split train \
---n_samples 500 \
+--n_samples 500
 python tools/digit_data_generator.py \
 --digit_dir ./data/digit_data/raw_digits/train \
---bg_dir ./data/digit_data/raw_image/Lark_soft \
+--bg_dir ./data/digit_data/raw_image/Light_soft \
 --fg_dir ./data/digit_data/raw_image/Dark_soft \
 --dataset_split train \
---n_samples 500 \
+--n_samples 500
 # val
 python tools/digit_data_generator.py \
 --digit_dir ./data/digit_data/raw_digits/val \
 --bg_dir ./data/digit_data/raw_image/Dark_soft \
---fg_dir ./data/digit_data/raw_image/Lark_soft \
+--fg_dir ./data/digit_data/raw_image/Light_soft \
 --dataset_split val \
---n_samples 100 \
+--n_samples 100
 python tools/digit_data_generator.py \
 --digit_dir ./data/digit_data/raw_digits/val \
---bg_dir ./data/digit_data/raw_image/Lark_soft \
+--bg_dir ./data/digit_data/raw_image/Light_soft \
 --fg_dir ./data/digit_data/raw_image/Dark_soft \
 --dataset_split val \
---n_samples 100 \
+--n_samples 100
 ```
 
 ## Convert to TFRecord

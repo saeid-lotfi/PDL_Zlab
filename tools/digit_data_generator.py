@@ -164,7 +164,7 @@ def main(_argv):
         bg_path= f"{FLAGS.bg_dir}",
         fg_path= f"{FLAGS.fg_dir}"
         )
-    result.writelines([image, '\n'])
+        result.writelines([image, '\n'])
     logging.info(f"{FLAGS.n_samples} samples generated")
     result.close()
 

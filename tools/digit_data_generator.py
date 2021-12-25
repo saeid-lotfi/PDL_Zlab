@@ -7,6 +7,7 @@ from PIL import Image
 import numpy as np
 from pascal_voc_writer import Writer
 from tqdm import tqdm
+import cv2 as cv
 
 
 flags.DEFINE_string('data_dir', './data/digit_data',
@@ -19,7 +20,7 @@ flags.DEFINE_string('dataset_split', 'train', 'dataset partition name')
 flags.DEFINE_integer('n_samples', 500, 'number of samples')
 flags.DEFINE_integer('image_width', 640, 'image width')
 flags.DEFINE_integer('image_height', 480, 'image height')
-flags.DEFINE_integer('n_digit_in_image', 4, 'maximum number of digit in a single image')
+flags.DEFINE_integer('n_digit_in_image', 10, 'maximum number of digit in a single image')
 
 def get_iou(bb1, bb2):
     """
@@ -85,41 +86,85 @@ def bb_generator(image_size, digit_size, bb_list):
         x_max = x_min + digit_size[0]
         y_max = y_min + digit_size[1]
         bb = (x_min, y_min, x_max, y_max)
-        if bb_intersection_check(bb, bb_list, threshold= 0.15):
+        if bb_intersection_check(bb, bb_list, threshold= 0.1):
             break
     return bb
 
+def affine_transformation(image):
+    """
+    Apply an affine transformation on an image
+
+    Parameters
+    ----------
+    image : ndarray of size (width x height x channel)
+    ----------
+    transformed_image : ndarray of size (width x height x channel)
+
+    """
+    # output size
+    digit_width = image.shape[1]
+    digit_height = image.shape[0]
+    # little affine transformation
+    a_00 = np.random.normal(1, 0.1)
+    a_01 = np.random.normal(0, 0.2)
+    a_10 = np.random.normal(0, 0.2)
+    a_11 = np.random.normal(1, 0.1)
+    affine_mat = np.array([
+        [a_00, a_01],
+        [a_10, a_11]])
+    # getting center movement
+    center_point = np.array([image.shape[1] / 2, image.shape[0] / 2])
+    transformed_center = np.matmul(affine_mat, center_point)
+    translation_vector = (center_point - transformed_center).reshape([2,1])
+    # concatinating affine transformation matrix with translation vector
+    affine_transformation_mat = np.concatenate([affine_mat, translation_vector], axis= 1)
+    # applying transformation on image
+    transformed_image = cv.warpAffine(image, affine_transformation_mat, (digit_width, digit_height), borderValue= [255,255,255])
+    # sclaing
+    random_scale = np.random.uniform(0.4, 2) # random choice for scaling
+    digit_width = int(digit_width * random_scale)
+    digit_height = int(digit_height * random_scale)
+    transformed_image = cv.resize(transformed_image, (digit_width, digit_height))
+    
+    return transformed_image
+
 def generate_image(digit_path, bg_path, fg_path):
     """
-    generate one example from given raw digits and back grounds
-    generated a new image and its annotation
+    Generate one example from given raw digits and backgrounds
+    and make a new image and its annotation
     """
-    class_names = [c.strip() for c in open(FLAGS.classes).readlines()]
-    # annotation template
-    example_name = str(uuid.uuid4()) # unique name for generated example
-    writer = Writer(f"{FLAGS.data_dir}/JPEGImages/{example_name}.jpg", FLAGS.image_width, FLAGS.image_height)
-    # make raw mask
-    mask = Image.new(mode= 'L', size= [FLAGS.image_width, FLAGS.image_height], color= 'white') # blank white image
-    mask = np.array(mask) # changing to numpy
-    # locating digits in mask
-    n_digits = np.random.randint(FLAGS.n_digit_in_image + 1) # select number of digits in a single image
+    # base directories
     raw_digits = os.listdir(digit_path) # list of available digits
     raw_backgrounds = os.listdir(bg_path) # list of available backgrounds
     raw_foregrounds = os.listdir(fg_path) # list of available foregrounds
+    # list of digit names used in labels
+    class_names = [c.strip() for c in open(FLAGS.classes).readlines()]
+
+    # annotation template
+    example_name = str(uuid.uuid4()) # unique name for generated example
+    writer = Writer(f"{FLAGS.data_dir}/JPEGImages/{example_name}.jpg", FLAGS.image_width, FLAGS.image_height)
+
+    # making background
+    random_back = random.choice(raw_backgrounds) # pick random background
+    bg_img = Image.open(f"{bg_path}/{random_back}").resize([FLAGS.image_width, FLAGS.image_height]).convert('RGB') # open and resize
+    random_color = tuple(np.random.randint(256, size= 3)) # pick random color for blending
+    random_color = Image.new(mode= 'RGB', size= [FLAGS.image_width, FLAGS.image_height], color= random_color)
+    bg_img = Image.blend(im1= bg_img, im2= random_color, alpha= 0.3) # mixing background with color
+    
+    # locating digits in background
     bounding_box_list = [] # keep a list of image bounding boxes
+    n_digits = np.random.randint(FLAGS.n_digit_in_image + 1) # select number of digits in a single image
     if n_digits >= 1:
         for i in range(n_digits):
-        
             # select random digit from raw digits
             random_digit = random.choice(raw_digits) # random digit image
-            digit_label = class_names[int(random_digit[0])] # digit label
-            selected_digit = Image.open(f'{digit_path}/{random_digit}').convert('L') # converting to monocolor
-            digit_width, digit_height = (selected_digit.size[0], selected_digit.size[1]) # getting size
-            random_scale = np.random.uniform(0.5, 1.5) # random choice for scaling
-            digit_width = int(digit_width * random_scale)
-            digit_height = int(digit_width * random_scale)
-            selected_digit = selected_digit.resize((digit_width, digit_height)) # resizing
-            selected_digit = selected_digit.rotate(np.random.randint(-10, 10), fillcolor= 'white') # small transformation
+            # digit label
+            digit_label = class_names[int(random_digit[0])]
+            # opening digit in opencv and apply random transformation
+            selected_digit = cv.imread(cv.samples.findFile(f'{digit_path}/{random_digit}'))
+            selected_digit = affine_transformation(selected_digit)
+            digit_width, digit_height = (selected_digit.shape[1], selected_digit.shape[0]) # getting digit size
+            selected_digit = Image.fromarray(cv.cvtColor(selected_digit, cv.COLOR_BGR2RGB), mode= 'RGB').convert('L')
             # generate a possible bounding box
             bb = bb_generator(
                 image_size= (FLAGS.image_width, FLAGS.image_height),
@@ -127,26 +172,25 @@ def generate_image(digit_path, bg_path, fg_path):
                 bb_list= bounding_box_list)
             # add the bounding box to the existing list
             bounding_box_list.append(bb)
-            # editing mask
-            mask[bb[1]:bb[3], bb[0]:bb[2]] = np.minimum(np.array(selected_digit), mask[bb[1]:bb[3], bb[0]:bb[2]]) # replacing mask with digit
+            # making mask
+            mask = Image.new(mode= 'L', size= [FLAGS.image_width, FLAGS.image_height], color= 'white') # blank white image
+            mask = np.array(mask) # changing to numpy
+            mask[bb[1]:bb[3], bb[0]:bb[2]] = np.array(selected_digit) # replacing part of mask with digit
+            mask = Image.fromarray(mask, mode= 'L') # from numpy to Image
+            # compose image
+            random_front = random.choice(raw_foregrounds) # pick random foreground
+            fg_img = Image.open(f"{fg_path}/{random_front}").resize([FLAGS.image_width, FLAGS.image_height]).convert('RGB')
+            random_color = tuple(np.random.randint(256, size= 3)) # pick random color for blending
+            random_color = Image.new(mode= 'RGB', size= [FLAGS.image_width, FLAGS.image_height], color= random_color)
+            fg_img = Image.blend(im1= fg_img, im2= random_color, alpha= 0.7) # mixing foreground with color
+            bg_img = Image.composite(image1= bg_img, image2= fg_img, mask= mask) 
             # adding annotation
             writer.addObject(digit_label, bb[0], bb[1], bb[2], bb[3])
     # save .xml annotation file
     writer.save(f"{FLAGS.data_dir}/Annotations/{example_name}.xml")
-    # compose image
-    mask = Image.fromarray(mask) # from numpy to Image
-    random_back = random.choice(raw_backgrounds) # pick random background
-    bg_img = Image.open(f"{bg_path}/{random_back}").resize([FLAGS.image_width, FLAGS.image_height]) # opne and resize
-    random_front = random.choice(raw_foregrounds) # pick random foreground
-    fg_img = Image.open(f"{fg_path}/{random_front}").resize([FLAGS.image_width, FLAGS.image_height])
-    # random_color = tuple(np.random.randint(256, size= 3)) # pick random color for blending
-    # random_color = Image.new(mode= 'RGB', size= [FLAGS.image_width, FLAGS.image_height])
-    # fg_img = Image.blend(im1= fg_img, im2= random_color, alpha= 0.3)
-    new_image = Image.composite(image1= bg_img, image2= fg_img, mask= mask)
-    new_image.save(f"{FLAGS.data_dir}/JPEGImages/{example_name}.jpg", 'JPEG')
+    bg_img.save(f"{FLAGS.data_dir}/JPEGImages/{example_name}.jpg", 'JPEG')
 
     return example_name
-  
 
 def main(_argv):
 

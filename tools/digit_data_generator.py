@@ -18,9 +18,9 @@ flags.DEFINE_string('fg_dir', '', 'path to raw foregrounds directory')
 flags.DEFINE_string('classes', './data/digit.names', 'classes file')
 flags.DEFINE_string('dataset_split', 'train', 'dataset partition name')
 flags.DEFINE_integer('n_samples', 500, 'number of samples')
-flags.DEFINE_integer('image_width', 640, 'image width')
-flags.DEFINE_integer('image_height', 480, 'image height')
-flags.DEFINE_integer('n_digit_in_image', 10, 'maximum number of digit in a single image')
+flags.DEFINE_integer('image_width', 1024, 'image width')
+flags.DEFINE_integer('image_height', 768, 'image height')
+flags.DEFINE_integer('n_digit_in_image', 8, 'maximum number of digit in a single image')
 
 def get_iou(bb1, bb2):
     """
